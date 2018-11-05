@@ -1,0 +1,66 @@
+<html>
+  <header>
+      <title>Lista de Arquivos</title>
+      <script>
+        var Download = function() {
+        };
+
+        Download.prototype.copyFile = function(response) {
+
+          var fileReader = new FileReader();
+
+          fileReader.onload = function (event) {
+              var result = event.target.result;
+
+              try {
+                  localStorage.setItem("download", result);
+              } catch (e) {
+                  console.log("fail: " + e);
+              }
+          };
+
+          fileReader.readAsDataURL(response.response);
+        };
+
+        Download.prototype.save = function(path) {
+          var _this = this;
+
+          var request = new XMLHttpRequest();
+          request.responseType = 'blob';
+          request.onload = function() {
+            _this.copyFile(this);
+          };
+          request.open("get", path, true);
+          request.send();
+        };
+
+        function downloadEvent(event) {
+          var target = event.target;
+          if (target.className === 'download') {
+            event.stopPropagation();
+            event.preventDefault();
+
+            var download = new Download();
+            download.save(target.getAttribute('data-file'));
+          }
+        }
+
+        document.body.addEventListener('click', downloadEvent, false);
+
+      </script>
+  </header>
+
+  <body>
+    <head>
+      <h1>Lista de Arquivos</h1>
+    </head>
+    <content>
+      <ul>
+        {{#files}}
+          <li><a class="download" href="#" data-file="/{{path}}">{{path}}</a></li>
+        {{/files}}
+      </ul>
+    </content>
+  </body>
+</html>
+

@@ -1,0 +1,23 @@
+{
+  "name": "download-big-files",
+  "version": "1.0.0",
+  "description": "Application for download big files",
+  "main": "bff/application.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/diegorubin/download-big-files.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/diegorubin/download-big-files/issues"
+  },
+  "homepage": "https://github.com/diegorubin/download-big-files#readme",
+  "dependencies": {
+    "express": "^4.16.4",
+    "mustache-express": "^1.2.8"
+  }
+}
