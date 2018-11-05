@@ -6,6 +6,7 @@
         };
 
         Download.prototype.copyFile = function(response) {
+          var _this = this;
 
           var fileReader = new FileReader();
 
@@ -14,12 +15,22 @@
 
               try {
                   localStorage.setItem("download", result);
+                  _this.createLink(result, "bigfile.tar.gz");
               } catch (e) {
                   console.log("fail: " + e);
               }
           };
 
           fileReader.readAsDataURL(response.response);
+        };
+
+        Download.prototype.createLink = function(content, title) {
+          var encodedUri = encodeURI(content);
+          var link = document.createElement("a");
+          link.setAttribute("href", encodedUri);
+          link.setAttribute("download", title);
+          link.innerHTML = "baixando...";
+          document.body.appendChild(link);
         };
 
         Download.prototype.save = function(path) {
