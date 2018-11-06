@@ -5,7 +5,7 @@
         var Download = function() {
         };
 
-        Download.prototype.copyFile = function(response) {
+        Download.prototype.copyFile = function(response, title, part) {
           var _this = this;
 
           var fileReader = new FileReader();
@@ -14,8 +14,7 @@
               var result = event.target.result;
 
               try {
-                  localStorage.setItem("download", result);
-                  _this.createLink(result, "bigfile.tar.gz");
+                  localStorage.setItem(title + "-" + part, result);
               } catch (e) {
                   console.log("fail: " + e);
               }
@@ -33,15 +32,32 @@
           document.body.appendChild(link);
         };
 
-        Download.prototype.save = function(path) {
+        Download.prototype.infos = function() {
+          var _this = this;
+
+          var request = new XMLHttpRequest();
+          request.onload = function() {
+            var response = JSON.parse(this.responseText);
+            _this.save(this, title, response.totals, 1);
+          };
+          request.open("get", path, true);
+          request.send();
+        };
+
+        Download.prototype.save = function(path, title, parts, currentPart) {
           var _this = this;
 
           var request = new XMLHttpRequest();
           request.responseType = 'blob';
           request.onload = function() {
-            _this.copyFile(this);
+            _this.copyFile(this, title, currentPart);
+            if (currentPart < parts) {
+              _this.save(path, title, parts, currentPart + 1);
+            } else {
+              _this.createLink(result, title, parts);
+            }
           };
-          request.open("get", path, true);
+          request.open("get", path + "/" + currentPart, true);
           request.send();
         };
 
@@ -52,7 +68,7 @@
             event.preventDefault();
 
             var download = new Download();
-            download.save(target.getAttribute('data-file'));
+            download.save(target.getAttribute('data-file'), target.innerHTML);
           }
         }
 

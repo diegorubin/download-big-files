@@ -11,7 +11,8 @@ app.set('views', __dirname + '/views');
 app.get('/', function (req, res) {
   res.render('home', {
     'files': [
-      {'path': 'mountain.jpg'}
+      {'path': 'mountain.jpg'},
+      {'path': 'bigfile.tar.bz2'}
     ]
   });
 });
@@ -36,6 +37,8 @@ app.get('/:file', function (req, res) {
 });
 
 app.get('/:file/:part', function (req, res) {
+  
+  const mb = 1048576;
 
   fs.open('files/' + req.params.file, 'r', function(err, fd) {
     if (err) {
@@ -46,10 +49,9 @@ app.get('/:file/:part', function (req, res) {
         const bufferSize=stats.size,
           buffer=Buffer.alloc(bufferSize);
 
-        let bytesRead = 0,
+        let bytesRead = (req.params.part - 1) * mb,
           chunkSize=512;
   
-        const total = 1048576;
         while (bytesRead < bufferSize) {
           if ((bytesRead + chunkSize) > bufferSize) {
             chunkSize = (bufferSize - bytesRead);
